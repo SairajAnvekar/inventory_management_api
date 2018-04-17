@@ -4,9 +4,11 @@ const mongoose = require('mongoose'),
       CategoryDetailsModel = require('@InventoryManagerModels/categoryDetails'),
       ProductModel = require('@InventoryManagerModels/product'),
       SupplierModel = require('@InventoryManagerModels/supplier'),
-      CustomerModel = require('@InventoryManagerModels/customer');
+      CustomerModel = require('@InventoryManagerModels/customer'),
       PurchaseOrderModel = require('@InventoryManagerModels/purchaseOrder'),
-      StockModel = require('@InventoryManagerModels/stock');
+      StockModel = require('@InventoryManagerModels/stock'),
+      InvoiceModel = require('@InventoryManagerModels/invoice')
+      
 const models = {
   User: mongoose.model('User'),
   Category : mongoose.model('Category'),
@@ -15,7 +17,8 @@ const models = {
   Customer : mongoose.model('Customer'),
   Supplier : mongoose.model('Supplier'),
   PurchaseOrder : mongoose.model("PurchaseOrder"),
-  Stock : mongoose.model("Stock")
-  
+  Stock : mongoose.model("Stock"),
+  Invoice : mongoose.model("Invoice")
+
 }
 module.exports = models;

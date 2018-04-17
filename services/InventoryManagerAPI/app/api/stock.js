@@ -92,11 +92,34 @@ api.saveAll =  (User, Stock, Token) => (req, res) => {
 
 api.edit = (User, Stock, Token) => (req, res) => {
   if (Token) {  
-  const emp_id = req.query.emp_id;
-   Stock.findOneAndUpdate({ emp_id: emp_id }, req.body, (error, Stock) => {
-          if (error) res.status(400).json(error);
-          res.status(200).json(Stock);
-        })   
+  
+        var myresponse = [];
+        async.each(req.body.stock,function(item,callback){
+            console.log(item)
+            var stockId = item.stockId;
+            var batchNumber = item.batch_number;
+            var stock = new Stock({
+                _id : item.stockId,
+                quantity: item.quantity,
+                batch_number : item.batch_number,
+                purchase_price : item.purchase_price,
+                selling_price : item.selling_price,
+                date : item.date,
+                product_id : item._id
+            });
+
+            Stock.findOneAndUpdate({ _id : stockId}, stock, (error, Stock) => {
+              if (error) return callback(error);
+              myresponse.push(stock)
+              callback(null,myresponse);
+            })  
+                    
+        },function(err,response){
+            console.log(err)
+            console.log(myresponse)
+            if (err) return res.status(400).json(err);
+            res.status(200).json({ success: true, Stock: myresponse });
+        })
   } else return res.status(403).send({ success: false, message: 'Unauthorized' });
 }
 

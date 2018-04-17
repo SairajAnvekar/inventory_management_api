@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const api = {};
 
-api.getAll = (User, CategoryDetailsDetails, Token) => (req, res) => {
+api.getAll = (User, CategoryDetails, Token) => (req, res) => {
   if (Token) {
     CategoryDetails.find({}, (error, CategoryDetails) => {
       if (error) return res.status(400).json(error);
@@ -13,6 +13,8 @@ api.getAll = (User, CategoryDetailsDetails, Token) => (req, res) => {
 
 api.store = (User, CategoryDetails, Token) => (req, res) => {
   if (Token) {
+
+    console.log(req.body)
     const categoryDetails = new CategoryDetails({
       product_id: req.body.categoryDetails.productId,
       category_id: req.body.categoryDetails.categoryId,

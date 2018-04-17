@@ -12,6 +12,7 @@ module.exports = (app) => {
      .put(passport.authenticate('jwt', config.session), api.edit(models.User,models.Product, app.get('budgetsecret')));
 
 app.route('/api/v1/product/category').get(passport.authenticate('jwt', config.session), api.getAllWithCategory(models.Category,models.Product, app.get('budgetsecret')))
+app.route('/api/v1/product/stock').get(passport.authenticate('jwt', config.session), api.getAllWithStock(models.Stock,models.Product, app.get('budgetsecret')))
 
 
 }

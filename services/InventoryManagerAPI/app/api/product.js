@@ -43,6 +43,44 @@ api.getAllWithCategory = (Category, Product, Token) => (req, res) => {
     } else return res.status(403).send({ success: false, message: 'Unauthorized' });
   }
 
+api.getAllWithStock = (Stock, Product, Token) => (req, res) => {
+  if (Token) {   
+    Product.find({}, (error, Product) => {
+      if (error) return res.status(400).json(error);
+      var searchIds= [];
+      var products = {};
+     
+      Product.forEach(function(obj){
+          searchIds.push( new ObjectId(obj._id));
+      });
+      Stock.find({"product_id" : { "$in" : searchIds }}, (error, Stock) => {
+          if (error) return res.status(400).json(error);
+          
+          var newProduct = [];
+          var index = 0;
+            Stock.forEach(function(sobj){
+                Product.forEach(function(pobj){
+               
+                  if(mongo.ObjectID(pobj._id).toString() === mongo.ObjectID(sobj.product_id).toString()){
+                      newProduct.push(JSON.parse(JSON.stringify(pobj)));
+                      newProduct[index].batch_number = sobj.batch_number;
+                      newProduct[index].quantity = sobj.quantity;
+                      newProduct[index].selling_price = sobj.selling_price;
+                      newProduct[index].purchase_price = sobj.purchase_price;
+                      newProduct[index].date = sobj.date;
+                      newProduct[index].stockId = sobj._id;
+                      index++;
+                  }
+                  
+              });
+              
+          });
+          res.status(200).json(newProduct);
+          return true;
+      });
+    })
+  } else return res.status(403).send({ success: false, message: 'Unauthorized' });
+} 
 api.store = (User, Product, Token) => (req, res) => {
   if (Token) {
     const product = new Product({
@@ -51,6 +89,7 @@ api.store = (User, Product, Token) => (req, res) => {
       category_id: req.body.product.category_id
     });
 
+    console.log(req.body)
     product.save((error, product)  => {
       if (error) return res.status(400).json(error);
       res.status(200).json({ success: true, Product: product });
