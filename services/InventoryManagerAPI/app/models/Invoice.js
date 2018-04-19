@@ -7,6 +7,7 @@ const Schema = mongoose.Schema({
         required: true
     },
     invoice_details: [],
+    subCategories: [],
     total_amount: {
         type: Number,
         required: true

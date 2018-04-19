@@ -6,6 +6,7 @@ const Schema = mongoose.Schema({
         type: String,
         required: true
     },
+    address:String,
     name: {
         type: String,
         required: true
@@ -16,12 +17,13 @@ const Schema = mongoose.Schema({
     tin: {
         type: String
     },
-    logo : {
-        type: Blob,
-        required: true 
+    phone: {
+        type: String
     },
-    Branch: [
-        {
+    logo : {
+        type: String,      
+    },
+    branch: {
             name: {
                 type: String,
                 required: true
@@ -31,7 +33,7 @@ const Schema = mongoose.Schema({
                 required: true
             },   
             is_head: {
-                type: boolean,
+                type: Boolean,
                 required: true
             }, 
             dc_number: {
@@ -41,8 +43,9 @@ const Schema = mongoose.Schema({
             dc_date: {
                 type: Date,
                 timestamps: true
-            }
-        }]
+            },
+            address:String,
+        }
 });
 
 

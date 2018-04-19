@@ -51,6 +51,7 @@ api.store = (Stock, Invoice, Token) => (req, res) => {
         customer_id: req.body.invoice.customerId,
         date_of_sale: req.body.invoice.dateOfSale,
         invoice_details : req.body.invoice.items,
+        subCategories:req.body.invoice.subCategories,
         is_gst : req.body.invoice.isGST
     });
 
