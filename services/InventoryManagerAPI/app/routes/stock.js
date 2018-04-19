@@ -5,7 +5,8 @@ module.exports = (app) => {
   const api = app.InventoryManagerAPI.app.api.stock;
  
   app.route('/api/v1/stock/:stockId')
-     .delete(passport.authenticate('jwt', config.session), api.remove(models.CategoryDetails,models.Stock, app.get('budgetsecret')));
+     .delete(passport.authenticate('jwt', config.session), api.remove(models.Invoice,models.Stock, app.get('budgetsecret')))
+     .put(passport.authenticate('jwt', config.session), api.update(models.Invoice,models.Stock, app.get('budgetsecret')));
   app.route('/api/v1/stock/')
      .post(passport.authenticate('jwt', config.session),api.store(models.User,models.Stock,app.get('budgetsecret')))
      .get(passport.authenticate('jwt', config.session), api.getAll(models.User,models.Stock, app.get('budgetsecret')))

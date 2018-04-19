@@ -66,15 +66,14 @@ api.saveAll =  (User, Stock, Token) => (req, res) => {
         var myresponse = [];
         async.each(req.body.stock.items,function(item,callback){
             console.log(item)
-            const stock = new Stock({
+            const stock = {
                 product_id: item.productId,
                 quantity: item.quantity,
                 purchase_price: item.purchasePrice,
                 selling_price: item.sellingPrice,
                 batch_number: item.batchNumber
-            });
-        
-            stock.save((error, stock)  => {
+            };
+            Stock.findOneAndUpdate({ product_id : item.productId , batch_number : item.batchNumber },{$set : stock }, {upsert: true, new : true}, (error, stock)  => {
               if (error) return callback(error);
               myresponse.push(stock)
               callback(null,myresponse);
@@ -92,7 +91,7 @@ api.saveAll =  (User, Stock, Token) => (req, res) => {
 
 api.edit = (User, Stock, Token) => (req, res) => {
   if (Token) {  
-  
+    
         var myresponse = [];
         async.each(req.body.stock,function(item,callback){
             console.log(item)
@@ -134,17 +133,32 @@ api.checkout = (User, Stock, Token) => (req, res) => {
   } else return res.status(403).send({ success: false, message: 'Unauthorized' });
 }
 
-api.remove = (CategoryDetails, Stock, Token) => (req, res) => {
-    if (Token) {
-    const prodId = req.params.prodId;
-     Stock.remove({ _id: new ObjectId(prodId) }, (error, Stock) => {
-            if (error) res.status(400).json(error);
-          
-            CategoryDetails.remove({ stock_id: prodId }, (error, Stock) => {
-                if (error) res.status(400).json(error);
 
+api.update = (User, Stock, Token) => (req, res) => {
+  if (Token) {  
+          
+      var stockId = req.body.stock._id;
+      var stock = {
+          quantity: req.body.stock.quantity,
+          batch_number : req.body.stock.batch_number,
+          purchase_price : req.body.stock.purchase_price,
+          selling_price : req.body.stock.selling_price,
+          product_id : req.body.stock.product_id
+      };
+
+      Stock.findOneAndUpdate({ _id : stockId}, stock, (error, Stock) => {
+        if (error) return callback(error);
+        res.status(200).json({ success: true, Stock: Stock });
+      })  
+  } else return res.status(403).send({ success: false, message: 'Unauthorized' });
+}
+
+api.remove = (Invoice, Stock, Token) => (req, res) => {
+    if (Token) {
+    const stockId = req.params.stockId;
+     Stock.remove({ _id: new ObjectId(stockId) }, (error, Stock) => {
+            if (error) res.status(400).json(error);
                 res.status(200).json(Stock);
-            });
           })   
     } else return res.status(403).send({ success: false, message: 'Unauthorized' });
   }
