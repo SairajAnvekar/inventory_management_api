@@ -14,7 +14,6 @@ api.getAll = (CompanyProfile, Token) => (req, res) => {
 
 api.store = (CompanyProfile, Token) => (req, res) => {
   if (Token) {
-      console.log(req.body);
     const companyProfile = new CompanyProfile(req.body.profile);
     companyProfile.save((error, companyProfile)  => {
       if (error) return res.status(400).json(error);

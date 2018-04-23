@@ -3,7 +3,6 @@ const passport = require('passport'),
       models = require('@InventoryManager/app/setup');
 module.exports = (app) => {
   const api = app.InventoryManagerAPI.app.api.user;
-  console.log(app.InventoryManagerAPI.app.apis);
   app.route('/api/v1/setup')
      .post(api.setup(models.User))
   app.route('/api/v1/users')

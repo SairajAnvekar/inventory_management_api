@@ -17,6 +17,10 @@ const Schema = mongoose.Schema({
     email: {
         type: String,
         required: true
+    },
+    gstin : {
+        type: String,
+        default : ""
     }
 });
 

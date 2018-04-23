@@ -18,7 +18,8 @@ api.store = (Customer, Token) => (req, res) => {
       name: req.body.customer.name,
       address: req.body.customer.address,
       email: req.body.customer.emailId,
-      telephone_number: req.body.customer.telephoneNumber
+      telephone_number: req.body.customer.telephoneNumber,
+      gstin : req.body.customer.gstinNumber
     });
 
     customer.save((error, customer)  => {
@@ -28,10 +29,18 @@ api.store = (Customer, Token) => (req, res) => {
   } else return res.status(403).send({ success: false, message: 'Unauthorized' });
 }
 
-api.edit = (Customer, Token) => (req, res) => {
+api.update = (Customer, Token) => (req, res) => {
+
   if (Token) {  
-  const emp_id = req.query.emp_id;
-   Customer.findOneAndUpdate({ emp_id: emp_id }, req.body, (error, Customer) => {
+  const customerId = req.params.customerId;
+  const customer = {
+    name: req.body.customer.name,
+    address: req.body.customer.address,
+    email: req.body.customer.email,
+    telephone_number: req.body.customer.telephone_number,
+    gstin : req.body.customer.gstin
+  };
+   Customer.findOneAndUpdate( { _id : customerId } , customer, (error, Customer) => {
           if (error) res.status(400).json(error);
           res.status(200).json(Customer);
         })   

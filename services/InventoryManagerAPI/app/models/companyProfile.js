@@ -30,11 +30,11 @@ const Schema = mongoose.Schema({
             },
             number: {
                 type: Number,
-                required: true
+                required: false
             },   
             is_head: {
                 type: Boolean,
-                required: true
+                required: false
             }, 
             dc_number: {
                 type: Number,

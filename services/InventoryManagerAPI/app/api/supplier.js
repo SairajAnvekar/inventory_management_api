@@ -18,13 +18,32 @@ api.store = (Supplier, Token) => (req, res) => {
       name: req.body.supplier.name,
       address: req.body.supplier.address,
       email: req.body.supplier.emailId,
-      telephone_number: req.body.supplier.telephoneNumber
+      telephone_number: req.body.supplier.telephoneNumber,
+      gstin : req.body.supplier.gstinNumber
     });
 
     supplier.save((error, supplier)  => {
       if (error) return res.status(400).json(error);
       res.status(200).json({ success: true, Supplier: supplier });
     })
+  } else return res.status(403).send({ success: false, message: 'Unauthorized' });
+}
+
+
+api.update = (Supplier, Token) => (req, res) => {
+  if (Token) {  
+  const supplierId = req.params.supplierId;
+  const supplier = {
+    name: req.body.supplier.name,
+    address: req.body.supplier.address,
+    email: req.body.supplier.email,
+    telephone_number: req.body.supplier.telephone_number,
+    gstin : req.body.supplier.gstin
+  };
+  Supplier.findOneAndUpdate( { _id : supplierId } , supplier, (error, Supplier) => {
+          if (error) res.status(400).json(error);
+          res.status(200).json(Supplier);
+        })   
   } else return res.status(403).send({ success: false, message: 'Unauthorized' });
 }
 
