@@ -8,7 +8,8 @@ const mongoose = require('mongoose'),
       PurchaseOrderModel = require('@InventoryManagerModels/purchaseOrder'),
       StockModel = require('@InventoryManagerModels/stock'),
       InvoiceModel = require('@InventoryManagerModels/invoice'),
-      profileModel = require('@InventoryManagerModels/companyProfile')
+      profileModel = require('@InventoryManagerModels/companyProfile'),
+      CompanyTaxModel = require('@InventoryManagerModels/companyTax')
       
 const models = {
   User: mongoose.model('User'),
@@ -20,6 +21,7 @@ const models = {
   PurchaseOrder : mongoose.model("PurchaseOrder"),
   Stock : mongoose.model("Stock"),
   Invoice : mongoose.model("Invoice"),
-  Profile : mongoose.model("CompanyProfile")
+  Profile : mongoose.model("CompanyProfile"),
+  CompanyTax : mongoose.model("CompanyTax")
 }
 module.exports = models;

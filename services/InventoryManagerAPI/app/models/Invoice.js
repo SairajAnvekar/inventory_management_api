@@ -33,7 +33,15 @@ const Schema = mongoose.Schema({
     },
     profit: {
         type: Number
-    }
+    },
+    isPending : {
+        type : Boolean,
+        default : false
+    },
+    paidAmount : {
+        type : Number
+    },
+    taxList : []
 });
 
 

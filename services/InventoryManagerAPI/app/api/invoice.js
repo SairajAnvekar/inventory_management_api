@@ -44,16 +44,24 @@ api.getWithSupplier = (Supplier, Invoice, Token) => (req, res) => {
 
 api.store = (Stock, Invoice, Token) => (req, res) => {
   if (Token) {
-    const invoice = new Invoice({
-        invoice_number : req.body.invoice.invoiceNumber,
-        total_amount: req.body.invoice.totalAmount,
-        name_of_sales_person: req.body.invoice.salesPersonId,
-        customer_id: req.body.invoice.customerId,
-        date_of_sale: req.body.invoice.dateOfSale,
-        invoice_details : req.body.invoice.items,
-        subCategories:req.body.invoice.subCategories,
-        is_gst : req.body.invoice.isGST
-    });
+    var reqBody = {
+      invoice_number : req.body.invoice.invoiceNumber,
+      total_amount: req.body.invoice.totalAmount,
+      name_of_sales_person: req.body.invoice.salesPersonId,
+      customer_id: req.body.invoice.customerId,
+      date_of_sale: req.body.invoice.dateOfSale,
+      invoice_details : req.body.invoice.items,
+      subCategories:req.body.invoice.subCategories,
+      is_gst : req.body.invoice.isGST
+    }
+    if(req.body.invoice.isGST){
+      reqBody.taxList = req.body.invoice.taxList
+    }
+    if(req.body.invoice.isPending){
+      reqBody.isPending = req.body.invoice.isPending;
+      reqBody.paidAmount = req.body.invoice.paidAmount;
+    }
+    const invoice = new Invoice(reqBody);
 
     invoice.save((error, invoice)  => {
       if (error) return res.status(400).json(error);
