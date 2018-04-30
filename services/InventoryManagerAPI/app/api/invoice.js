@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const mongo = require('mongodb');
 const api = {};
+const async = require('async');
 var ObjectId = mongo.ObjectID;
 api.getAll = (User, Invoice, Token) => (req, res) => {
   if (Token) {
@@ -12,6 +13,20 @@ api.getAll = (User, Invoice, Token) => (req, res) => {
   } else return res.status(403).send({ success: false, message: 'Unauthorized' });
 }
 
+api.getCustomerInvoices =  (Customer, Invoice, Token) => (req, res) => {
+  if (Token) {
+    var reqBody = {customer_id : req.params.custId};
+    if(req.query.isPending){
+      reqBody.isPending = req.query.isPending;
+    }
+
+    Invoice.find(reqBody, (error, Invoice) => {
+      if (error) return res.status(400).json(error);
+      res.status(200).json(Invoice);
+      return true;
+    })
+  } else return res.status(403).send({ success: false, message: 'Unauthorized' });
+}
 api.getWithSupplier = (Supplier, Invoice, Token) => (req, res) => {
     if (Token) {
         Invoice.find({}, (error, Invoice) => {
@@ -72,14 +87,45 @@ api.store = (Stock, Invoice, Token) => (req, res) => {
 
 api.edit = (User, Invoice, Token) => (req, res) => {
   if (Token) {  
-  const porderId = req.params.porderId;
-  Invoice.findOneAndUpdate({ _id: porderId }, req.body.invoice, (error, Invoice) => {
+  const invoiceId = req.params.invoiceId;
+  Invoice.findOneAndUpdate({ _id: invoiceId }, req.body.invoice, (error, Invoice) => {
           if (error) res.status(400).json(error);
           res.status(200).json(Invoice);
     })   
   } else return res.status(403).send({ success: false, message: 'Unauthorized' });
 }
 
+api.updateStatus = (User, Invoice, Token) => (req, res) => {
+  if (Token) {  
+  const invoiceId = req.params.invoiceId;
+  Invoice.findOneAndUpdate({ _id: invoiceId }, req.body.invoice, (error, Invoice) => {
+          if (error) res.status(400).json(error);
+          res.status(200).json(Invoice);
+    })   
+  } else return res.status(403).send({ success: false, message: 'Unauthorized' });
+}
+
+
+api.updateStatusCustomer = (User, Invoice, Token) => (req, res) => {
+  if (Token) {  
+  var myresponse = [];
+  const custId = req.params.custId;
+  Invoice.find({ customer_id: custId ,isPending : true },(error, invoice) => {
+      if (error) res.status(400).json(error);
+        async.each(invoice,function(item,callback){
+          Invoice.findOneAndUpdate({ _id: item._id }, req.body.invoice, (error, resInvoice) => {
+            if (error) return callback(error);
+            myresponse.push(resInvoice)
+            callback(null,myresponse);
+          });
+        },function(err,response){
+          console.log(myresponse)
+          if (err) return res.status(400).json(err);
+          res.status(200).json({ success: true, Invoice: myresponse });
+      })
+    })   
+  } else return res.status(403).send({ success: false, message: 'Unauthorized' });
+}
 
 
 module.exports = api;
