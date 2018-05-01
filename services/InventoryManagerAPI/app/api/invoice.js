@@ -57,8 +57,9 @@ api.getWithSupplier = (Supplier, Invoice, Token) => (req, res) => {
     } else return res.status(403).send({ success: false, message: 'Unauthorized' });
 }
 
-api.store = (Stock, Invoice, Token) => (req, res) => {
+api.store = (Customer, Invoice, Token) => (req, res) => {
   if (Token) {
+    var pendingAmount = 0;
     var reqBody = {
       invoice_number : req.body.invoice.invoiceNumber,
       total_amount: req.body.invoice.totalAmount,
@@ -75,12 +76,22 @@ api.store = (Stock, Invoice, Token) => (req, res) => {
     if(req.body.invoice.isPending){
       reqBody.isPending = req.body.invoice.isPending;
       reqBody.paidAmount = req.body.invoice.paidAmount;
+      pendingAmount = req.body.invoice.totalAmount - req.body.invoice.paidAmount;
     }
     const invoice = new Invoice(reqBody);
 
     invoice.save((error, invoice)  => {
       if (error) return res.status(400).json(error);
-      res.status(200).json({ success: true, Invoice: invoice });
+      console.log(req.body.invoice.isPending)
+      if(req.body.invoice.isPending){
+        Customer.findOneAndUpdate({ _id: req.body.invoice.customerId },{ $inc : { pending_amount : pendingAmount}}, (error, customer) => {
+          if (error) res.status(400).json(error);
+
+          res.status(200).json({ success: true, Invoice: invoice,Customer : customer });
+        }) 
+      }else{
+        res.status(200).json({ success: true, Invoice: invoice });
+      }
     })
   } else return res.status(403).send({ success: false, message: 'Unauthorized' });
 }
@@ -95,18 +106,23 @@ api.edit = (User, Invoice, Token) => (req, res) => {
   } else return res.status(403).send({ success: false, message: 'Unauthorized' });
 }
 
-api.updateStatus = (User, Invoice, Token) => (req, res) => {
+api.updateStatus = (Customer, Invoice, Token) => (req, res) => {
   if (Token) {  
+  var paidAmount = (req.body.invoice.totalAmount - req.body.invoice.paidAmount) * -1;
   const invoiceId = req.params.invoiceId;
-  Invoice.findOneAndUpdate({ _id: invoiceId }, req.body.invoice, (error, Invoice) => {
-          if (error) res.status(400).json(error);
-          res.status(200).json(Invoice);
+  Invoice.findOneAndUpdate({ _id: invoiceId }, { "isPending" : req.body.invoice.isPending}, (error, invoice) => {
+      if (error) res.status(400).json(error);
+        
+       Customer.findOneAndUpdate({ _id: req.body.invoice.customerId },{ $inc : { pending_amount : paidAmount}}, (error, customer) => {
+            if (error) res.status(400).json(error);
+            res.status(200).json({ success: true, Invoice: invoice,Customer : customer });
+        }) 
     })   
   } else return res.status(403).send({ success: false, message: 'Unauthorized' });
 }
 
 
-api.updateStatusCustomer = (User, Invoice, Token) => (req, res) => {
+api.updateStatusCustomer = (Customer, Invoice, Token) => (req, res) => {
   if (Token) {  
   var myresponse = [];
   const custId = req.params.custId;
@@ -121,7 +137,11 @@ api.updateStatusCustomer = (User, Invoice, Token) => (req, res) => {
         },function(err,response){
           console.log(myresponse)
           if (err) return res.status(400).json(err);
-          res.status(200).json({ success: true, Invoice: myresponse });
+          
+          Customer.findOneAndUpdate({ _id: custId },{ $set : { pending_amount : 0}}, (error, customer) => {
+            if (error) res.status(400).json(error);
+            res.status(200).json({ success: true, Invoice: myresponse,Customer : customer });
+          }) 
       })
     })   
   } else return res.status(403).send({ success: false, message: 'Unauthorized' });

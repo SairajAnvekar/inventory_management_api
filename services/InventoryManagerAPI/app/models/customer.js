@@ -22,6 +22,10 @@ const Schema = mongoose.Schema({
         type: String,
         default : ""
 
+    },
+    pending_amount : {
+        type: Number,
+        default : 0
     }
 });
 

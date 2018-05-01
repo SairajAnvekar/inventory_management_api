@@ -68,4 +68,18 @@ api.remove = (Customer, Token) => (req, res) => {
     } else return res.status(403).send({ success: false, message: 'Unauthorized' });
   }
 
+api.updateAmount = (Customer, Token) => (req, res) => {
+  if (Token) {  
+  const customerId = req.params.customerId;
+  var pendingAmount = (req.body.customer.amountPaid * -1)
+
+  Customer.findOneAndUpdate({ _id: customerId },{ $inc : { pending_amount : pendingAmount}}, (error, customer) => {
+    if (error) res.status(400).json(error);
+
+    res.status(200).json({ success: true, Customer : customer });
+  }) 
+  } else return res.status(403).send({ success: false, message: 'Unauthorized' });
+}
+
+
 module.exports = api;

@@ -9,5 +9,7 @@ module.exports = (app) => {
   app.route('/api/v1/customer/')
      .post(passport.authenticate('jwt', config.session),api.store(models.Customer,app.get('budgetsecret')))
      .get(passport.authenticate('jwt', config.session), api.getAll(models.Customer, app.get('budgetsecret')))
-
+app.route('/api/v1/customer/updateAmount/:customerId')
+      .put(passport.authenticate('jwt', config.session), api.updateAmount(models.Customer, app.get('budgetsecret')));
+     
 }
