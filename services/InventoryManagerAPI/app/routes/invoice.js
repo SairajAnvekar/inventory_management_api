@@ -17,6 +17,7 @@ module.exports = (app) => {
   app.route('/api/v1/invoice/customer/:custId')
      .get(passport.authenticate('jwt', config.session), api.getCustomerInvoices(models.Customer,models.Invoice, app.get('budgetsecret')))
      .put(passport.authenticate('jwt', config.session), api.updateStatusCustomer(models.Customer,models.Invoice, app.get('budgetsecret')))
-
+  app.route('/api/v1/invoice/all')    
+     .get(passport.authenticate('jwt', config.session), api.getWithAll(models.Customer,models.User,models.Invoice, app.get('budgetsecret')))
 
 }

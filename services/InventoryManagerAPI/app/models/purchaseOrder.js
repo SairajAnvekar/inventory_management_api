@@ -3,6 +3,10 @@ const mongoose = require('mongoose'),
 
 const Schema = mongoose.Schema({
     product_details: [],
+    purchase_order_number : {
+        type: Number,
+        required: true
+    },
     total_amount: {
         type: Number,
         required: true

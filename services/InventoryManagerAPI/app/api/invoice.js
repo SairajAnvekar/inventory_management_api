@@ -27,6 +27,46 @@ api.getCustomerInvoices =  (Customer, Invoice, Token) => (req, res) => {
     })
   } else return res.status(403).send({ success: false, message: 'Unauthorized' });
 }
+
+api.getWithAll = (Customer,User, Invoice, Token) => (req, res) => {
+  if (Token) {
+      Invoice.find({}, (error, Invoice) => {
+          if (error) return res.status(400).json(error);
+          var searchIds= [],userSearchIds = [];
+         
+          Invoice.forEach(function(obj){
+              searchIds.push( new ObjectId(obj.customer_id));
+              userSearchIds.push(new ObjectId(obj.name_of_sales_person))
+          });
+          Customer.find({"_id" : { "$in" : searchIds }}, (error, Customer) => {
+              if (error) return res.status(400).json(error);
+              
+              User.find({"_id" : { "$in" : userSearchIds }}, (error, User) => {
+                if (error) return res.status(400).json(error); 
+                  var newInvoice = [];
+                  var index = 0;
+                  Invoice.forEach(function(pobj){
+                      newInvoice.push(JSON.parse(JSON.stringify(pobj)));
+                      Customer.forEach(function(cobj){
+                          if(mongo.ObjectID(pobj.customer_id).toString() === mongo.ObjectID(cobj._id).toString()){
+                              newInvoice[index].customerName = cobj.name;
+                          }
+                      });
+                      User.forEach(function(cobj){
+                        if(mongo.ObjectID(pobj.name_of_sales_person).toString() === mongo.ObjectID(cobj._id).toString()){
+                            newInvoice[index].salesPersonName = cobj.username;
+                        }
+                      });
+                      index++;
+                  });
+                  res.status(200).json(newInvoice);
+                  return true;
+            });
+          });
+    })
+  } else return res.status(403).send({ success: false, message: 'Unauthorized' });
+}
+
 api.getWithSupplier = (Supplier, Invoice, Token) => (req, res) => {
     if (Token) {
         Invoice.find({}, (error, Invoice) => {

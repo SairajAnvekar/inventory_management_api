@@ -14,7 +14,8 @@ api.getAll = (User, PurchaseOrder, Token) => (req, res) => {
 
 api.getWithSupplier = (Supplier, PurchaseOrder, Token) => (req, res) => {
     if (Token) {
-        PurchaseOrder.find({}, (error, PurchaseOrder) => {
+        PurchaseOrder.find({}).sort({purchase_order_number:1}).exec(function(error, PurchaseOrder){
+
             if (error) return res.status(400).json(error);
             var searchIds= [];
            
@@ -50,7 +51,8 @@ api.store = (Stock, PurchaseOrder, Token) => (req, res) => {
         supplier_id: req.body.stock.supplierId,
         date_of_order: req.body.stock.dateOrder,
         date_recieved: req.body.stock.dateDelivery,
-        product_details : req.body.stock.items
+        product_details : req.body.stock.items,
+        purchase_order_number : req.body.stock.purchaseNumber
     });
 
     purchaseOrder.save((error, purchaseOrder)  => {
