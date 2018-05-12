@@ -38,7 +38,6 @@ const Schema = mongoose.Schema({
             }, 
             dc_number: {
                 type: Number,
-                required: true
             }, 
             dc_date: {
                 type: Date,
