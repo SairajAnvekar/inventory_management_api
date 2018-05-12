@@ -11,12 +11,12 @@ const Schema = mongoose.Schema({
         required: true
     },
     telephone_number: {
-        type: Number,
-        required: true
+        type: String,
+        default: ""
     },
     email: {
         type: String,
-        required: true
+        default: ""
     },
     gstin : {
         type: String,
